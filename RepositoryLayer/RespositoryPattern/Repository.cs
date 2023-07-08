@@ -2,23 +2,30 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
+using RepositoryLayer.ConnectionManager;
+using Dapper;
+using System.Threading.Tasks;
 
 namespace RepositoryLayer.RespositoryPattern
 {
-   public class Repository<T> : IRepository<T> where T: BaseEntity
+    public class Repository<T> : IRepository<T> where T : BaseEntity
     {
         #region property
         private readonly ApplicationDbContext _applicationDbContext;
         private DbSet<T> entities;
+        private readonly IOraConnection _oraConnection;
         #endregion
 
         #region Constructor
-        public Repository(ApplicationDbContext applicationDbContext)
+        public Repository(ApplicationDbContext applicationDbContext, IOraConnection oraConnection)
         {
             _applicationDbContext = applicationDbContext;
             entities = _applicationDbContext.Set<T>();
+            _oraConnection = oraConnection;
+
         }
         #endregion
 
@@ -76,5 +83,50 @@ namespace RepositoryLayer.RespositoryPattern
             _applicationDbContext.SaveChanges();
         }
 
-    }
+        public IEnumerable<T> GetList(T entity)
+        {
+
+            IDbConnection connection = _oraConnection.GetConnection();
+
+            var result = connection.Query<T>(GetColumnList(entity));
+
+            _oraConnection.CloseConnection(connection);
+
+            return result;
+        }
+
+        private static string GetColumnList(T entity)
+        {
+            string selectedColumns = "Select ";
+            foreach (var prop in entity.GetType().GetProperties())
+            {
+                if (!prop.Name.Contains("_"))
+                {
+                    selectedColumns = selectedColumns + ConvertToPascalCase(prop.Name) + " AS " + prop.Name + ",";
+                }
+            }
+
+            return selectedColumns + " From " + ConvertToPascalCase(entity.GetType().Name);
+        }
+        private static string ConvertToPascalCase(string str)
+        {
+            return string.Concat(str.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString())).ToLower();
+        }
+
+		public async Task<int> InsertAsync(T entity)
+        {
+			if (entity == null)
+			{
+				throw new ArgumentNullException("entity");
+			}
+			entities.Add(entity);
+			return await _applicationDbContext.SaveChangesAsync();
+		}
+
+		public async Task<int> SaveChangesAsync()
+		{
+			return await _applicationDbContext.SaveChangesAsync();
+		}
+
+	}
 }

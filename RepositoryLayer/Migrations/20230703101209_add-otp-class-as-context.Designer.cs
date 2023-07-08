@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 using RepositoryLayer;
@@ -11,9 +12,11 @@ using RepositoryLayer;
 namespace RepositoryLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230703101209_add-otp-class-as-context")]
+    partial class addotpclassascontext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,10 +36,6 @@ namespace RepositoryLayer.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TIMESTAMP(7)");
 
-                    b.Property<string>("EmailAddress")
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("EMAIL_ADDRESS");
-
                     b.Property<DateTime>("GenerationDate")
                         .HasColumnType("TIMESTAMP(7)")
                         .HasColumnName("GENERATION_DATE");
@@ -51,52 +50,15 @@ namespace RepositoryLayer.Migrations
                     b.Property<DateTime>("ModifiedDate")
                         .HasColumnType("TIMESTAMP(7)");
 
-                    b.Property<int>("OtpCarrierId")
-                        .HasColumnType("NUMBER(10)")
-                        .HasColumnName("OTP_CARRIER_ID");
-
                     b.Property<int>("OtpTypeId")
                         .HasColumnType("NUMBER(10)")
                         .HasColumnName("OPT_TYPE_ID");
 
-                    b.Property<string>("Passcode")
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("PASSCODE");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("OtpCarrierId");
 
                     b.HasIndex("OtpTypeId");
 
                     b.ToTable("OTP");
-                });
-
-            modelBuilder.Entity("DomainLayer.Models.OtpCarrier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("NUMBER(1)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("OTP_CARRIER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OTP_CARRIER");
                 });
 
             modelBuilder.Entity("DomainLayer.Models.OtpType", b =>
@@ -107,8 +69,8 @@ namespace RepositoryLayer.Migrations
 
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CharLength")
-                        .HasColumnType("NUMBER(10)")
+                    b.Property<string>("CharLength")
+                        .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("CHAR_LENGTH");
 
                     b.Property<DateTime>("CreatedDate")
@@ -121,7 +83,6 @@ namespace RepositoryLayer.Migrations
                         .HasColumnType("TIMESTAMP(7)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("NVARCHAR2(2000)")
                         .HasColumnName("NAME");
 
@@ -334,19 +295,11 @@ namespace RepositoryLayer.Migrations
 
             modelBuilder.Entity("DomainLayer.Models.Otp", b =>
                 {
-                    b.HasOne("DomainLayer.Models.OtpType", "OtpCarrier")
-                        .WithMany()
-                        .HasForeignKey("OtpCarrierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DomainLayer.Models.OtpType", "OtpType")
                         .WithMany()
                         .HasForeignKey("OtpTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("OtpCarrier");
 
                     b.Navigation("OtpType");
                 });

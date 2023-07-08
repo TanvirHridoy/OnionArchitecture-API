@@ -11,5 +11,6 @@ namespace ServicesLayer.CustomerService
         void InsertCustomer(Customer customer);
         void UpdateCustomer(Customer customer);
         void DeleteCustomer(int id);
+        IEnumerable<Customer> GetList(Customer entity);
     }
 }

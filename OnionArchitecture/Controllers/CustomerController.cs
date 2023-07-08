@@ -1,6 +1,7 @@
 ﻿using DomainLayer.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryLayer.ConnectionManager;
 using ServicesLayer;
 using ServicesLayer.CustomerService;
 using System;
@@ -38,8 +39,9 @@ namespace OnionArchitecture.Controllers
         }
         [HttpGet(nameof(GetAllCustomer))]
         public IActionResult GetAllCustomer()
-        {
-            var result = _customerService.GetAllCustomers();
+        {            
+            //var result = _customerService.GetAllCustomers();
+            var result = _customerService.GetList(new Customer());
             if (result is not null)
             {
                 return Ok(result);

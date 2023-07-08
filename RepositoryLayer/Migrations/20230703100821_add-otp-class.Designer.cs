@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Oracle.EntityFrameworkCore.Metadata;
 using RepositoryLayer;
@@ -11,9 +12,11 @@ using RepositoryLayer;
 namespace RepositoryLayer.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230703100821_add-otp-class")]
+    partial class addotpclass
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,118 +24,6 @@ namespace RepositoryLayer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             OracleModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DomainLayer.Models.Otp", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<string>("EmailAddress")
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("EMAIL_ADDRESS");
-
-                    b.Property<DateTime>("GenerationDate")
-                        .HasColumnType("TIMESTAMP(7)")
-                        .HasColumnName("GENERATION_DATE");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("NUMBER(1)");
-
-                    b.Property<string>("MobileNumber")
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("MOBILE_NUMBER");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<int>("OtpCarrierId")
-                        .HasColumnType("NUMBER(10)")
-                        .HasColumnName("OTP_CARRIER_ID");
-
-                    b.Property<int>("OtpTypeId")
-                        .HasColumnType("NUMBER(10)")
-                        .HasColumnName("OPT_TYPE_ID");
-
-                    b.Property<string>("Passcode")
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("PASSCODE");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OtpCarrierId");
-
-                    b.HasIndex("OtpTypeId");
-
-                    b.ToTable("OTP");
-                });
-
-            modelBuilder.Entity("DomainLayer.Models.OtpCarrier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("NUMBER(1)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("OTP_CARRIER");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OTP_CARRIER");
-                });
-
-            modelBuilder.Entity("DomainLayer.Models.OtpType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(10)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CharLength")
-                        .HasColumnType("NUMBER(10)")
-                        .HasColumnName("CHAR_LENGTH");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("NUMBER(1)");
-
-                    b.Property<DateTime>("ModifiedDate")
-                        .HasColumnType("TIMESTAMP(7)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)")
-                        .HasColumnName("NAME");
-
-                    b.Property<int>("ValidTill")
-                        .HasColumnType("NUMBER(10)")
-                        .HasColumnName("VALID_TILL");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OTP_TYPE");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -330,25 +221,6 @@ namespace RepositoryLayer.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("DomainLayer.Models.Otp", b =>
-                {
-                    b.HasOne("DomainLayer.Models.OtpType", "OtpCarrier")
-                        .WithMany()
-                        .HasForeignKey("OtpCarrierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DomainLayer.Models.OtpType", "OtpType")
-                        .WithMany()
-                        .HasForeignKey("OtpTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OtpCarrier");
-
-                    b.Navigation("OtpType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

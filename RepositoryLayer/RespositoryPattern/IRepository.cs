@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RepositoryLayer.RespositoryPattern
 {
@@ -14,5 +15,10 @@ namespace RepositoryLayer.RespositoryPattern
         void Delete(T entity);
         void Remove(T entity);
         void SaveChanges();
-    }
+        IEnumerable<T> GetList(T entity);
+
+		//Async Methods added by Asad
+		Task<int> InsertAsync(T entity);
+
+	}
 }
